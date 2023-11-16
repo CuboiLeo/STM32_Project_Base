@@ -149,13 +149,13 @@ void StartIMUTask(void const * argument)
 	portTickType xLastWakeTime;
   xLastWakeTime = xTaskGetTickCount();
 
-  const TickType_t TimeIncrement = pdMS_TO_TICKS(1);
+  const TickType_t TimeIncrement = pdMS_TO_TICKS(2);
   /* Infinite loop */
   for(;;)
   {
-    Board_A_IMU_Func.Board_A_IMU_Calibrate(&Board_A_IMU);
 		Board_A_IMU_Func.Board_A_IMU_Read_Data(&Board_A_IMU);
 		Board_A_IMU_Func.Board_A_IMU_Calc_Angle(&Board_A_IMU);
+		Board_A_IMU_Func.Board_A_IMU_Calibrate(&Board_A_IMU);
 		IMU_Temp_Control_Func.Board_A_IMU_Temp_Control();
 		HC_SR04_Func.HC_SR04_Start();
 		
@@ -198,7 +198,7 @@ void Robot_Control(void const * argument)
 	portTickType xLastWakeTime;
   xLastWakeTime = xTaskGetTickCount();
 
-  const TickType_t TimeIncrement = pdMS_TO_TICKS(2);
+  const TickType_t TimeIncrement = pdMS_TO_TICKS(10);
   /* Infinite loop */
   for(;;)
   {
@@ -227,8 +227,9 @@ void Serial_Send(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    printf("/*IMU,%f,%f,%f,%d,%d*/\n",Board_A_IMU.Export_Data.Roll,Board_A_IMU.Export_Data.Pitch,Board_A_IMU.Export_Data.Total_Yaw,
-		DR16_Export_Data.Remote_Control.Joystick_Left_Vx,DR16_Export_Data.Remote_Control.Joystick_Left_Vy);
+    printf("/*%f,%f,%f,%f,%f,%f*/\n",Board_A_IMU.Export_Data.Total_Yaw,Board_A_IMU.Export_Data.Pitch,Board_A_IMU.Export_Data.Roll,\
+		Board_A_IMU.Export_Data.Gyro_Yaw,Board_A_IMU.Export_Data.Gyro_Pitch,Board_A_IMU.Export_Data.Gyro_Roll);
+		
 		vTaskDelayUntil(&xLastWakeTime, TimeIncrement);
   }
   /* USER CODE END Serial_Send */

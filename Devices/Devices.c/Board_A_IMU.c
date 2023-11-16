@@ -285,9 +285,9 @@ void Board_A_IMU_Read_Data(Board_A_IMU_t *Board_A_IMU)
 	
 	if(Board_A_IMU->Calibrated_Flag == 1)
 	{
-		Board_A_IMU->Calc_Data.Ax -= 0;//Board_A_IMU->Offset.Ax;
-		Board_A_IMU->Calc_Data.Ay -= 0;//Board_A_IMU->Offset.Ay;
-		Board_A_IMU->Calc_Data.Az -= 0;//Board_A_IMU->Offset.Az;
+//		Board_A_IMU->Calc_Data.Ax -= Board_A_IMU->Offset.Ax;
+//		Board_A_IMU->Calc_Data.Ay -= Board_A_IMU->Offset.Ay;
+//		Board_A_IMU->Calc_Data.Az -= Board_A_IMU->Offset.Az;
 		Board_A_IMU->Calc_Data.Gx -= Board_A_IMU->Offset.Gx;
 		Board_A_IMU->Calc_Data.Gy -= Board_A_IMU->Offset.Gy;
 		Board_A_IMU->Calc_Data.Gz -= Board_A_IMU->Offset.Gz;
@@ -305,9 +305,9 @@ void Board_A_IMU_Calc_Angle(Board_A_IMU_t *Board_A_IMU)
 	Board_A_IMU->Export_Data.Yaw = Board_A_IMU_Euler.angle.yaw;
 	Board_A_IMU->Export_Data.Pitch = Board_A_IMU_Euler.angle.pitch;
 	Board_A_IMU->Export_Data.Roll = Board_A_IMU_Euler.angle.roll;
-	Board_A_IMU->Export_Data.Gyro_Yaw = Board_A_IMU->Calc_Data.Gx;
+	Board_A_IMU->Export_Data.Gyro_Yaw = Board_A_IMU->Calc_Data.Gz;
 	Board_A_IMU->Export_Data.Gyro_Pitch = Board_A_IMU->Calc_Data.Gy;
-	Board_A_IMU->Export_Data.Gyro_Roll = Board_A_IMU->Calc_Data.Gz;
+	Board_A_IMU->Export_Data.Gyro_Roll = Board_A_IMU->Calc_Data.Gx;
 	Board_A_IMU->Export_Data.Temperature = Board_A_IMU->Calc_Data.Temperature;
 	
 	if((Board_A_IMU->Export_Data.Yaw - Board_A_IMU->Export_Data.Prev_Yaw) < - 300)
