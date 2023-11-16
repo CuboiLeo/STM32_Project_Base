@@ -115,7 +115,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of Task_IMU */
-  osThreadDef(Task_IMU, StartIMUTask, osPriorityNormal, 0, 384);
+  osThreadDef(Task_IMU, StartIMUTask, osPriorityHigh, 0, 384);
   Task_IMUHandle = osThreadCreate(osThread(Task_IMU), NULL);
 
   /* definition and creation of Task_Init */
@@ -127,7 +127,7 @@ void MX_FREERTOS_Init(void) {
   Task_Robot_CtrlHandle = osThreadCreate(osThread(Task_Robot_Ctrl), NULL);
 
   /* definition and creation of Task_Serial */
-  osThreadDef(Task_Serial, Serial_Send, osPriorityHigh, 0, 128);
+  osThreadDef(Task_Serial, Serial_Send, osPriorityLow, 0, 128);
   Task_SerialHandle = osThreadCreate(osThread(Task_Serial), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -149,7 +149,7 @@ void StartIMUTask(void const * argument)
 	portTickType xLastWakeTime;
   xLastWakeTime = xTaskGetTickCount();
 
-  const TickType_t TimeIncrement = pdMS_TO_TICKS(2);
+  const TickType_t TimeIncrement = pdMS_TO_TICKS(1);
   /* Infinite loop */
   for(;;)
   {
@@ -198,12 +198,15 @@ void Robot_Control(void const * argument)
 	portTickType xLastWakeTime;
   xLastWakeTime = xTaskGetTickCount();
 
-  const TickType_t TimeIncrement = pdMS_TO_TICKS(10);
+  const TickType_t TimeIncrement = pdMS_TO_TICKS(2);
   /* Infinite loop */
   for(;;)
   {
 		Robot_Func.Robot_Get_Data();
 		Robot_Func.Robot_In_Control();
+		
+		printf("/*%f,%f,%f,%f,%f,%f*/\n",Board_A_IMU.Export_Data.Total_Yaw,Board_A_IMU.Export_Data.Pitch,Board_A_IMU.Export_Data.Roll,\
+		Board_A_IMU.Export_Data.Gyro_Yaw,Board_A_IMU.Export_Data.Gyro_Pitch,Board_A_IMU.Export_Data.Gyro_Roll);
 		
 		vTaskDelayUntil(&xLastWakeTime, TimeIncrement);
   }
@@ -227,8 +230,8 @@ void Serial_Send(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    printf("/*%f,%f,%f,%f,%f,%f*/\n",Board_A_IMU.Export_Data.Total_Yaw,Board_A_IMU.Export_Data.Pitch,Board_A_IMU.Export_Data.Roll,\
-		Board_A_IMU.Export_Data.Gyro_Yaw,Board_A_IMU.Export_Data.Gyro_Pitch,Board_A_IMU.Export_Data.Gyro_Roll);
+//    printf("/*%f,%f,%f,%f,%f,%f*/\n",Board_A_IMU.Export_Data.Total_Yaw,Board_A_IMU.Export_Data.Pitch,Board_A_IMU.Export_Data.Roll,\
+//		Board_A_IMU.Export_Data.Gyro_Yaw,Board_A_IMU.Export_Data.Gyro_Pitch,Board_A_IMU.Export_Data.Gyro_Roll);
 		
 		vTaskDelayUntil(&xLastWakeTime, TimeIncrement);
   }
