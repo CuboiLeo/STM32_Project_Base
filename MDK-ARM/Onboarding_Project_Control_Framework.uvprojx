@@ -1646,6 +1646,11 @@
               <FileType>1</FileType>
               <FilePath>..\Devices\Devices.c\HC_SR04.c</FilePath>
             </File>
+            <File>
+              <FileName>Buzzer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Devices\Devices.c\Buzzer.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

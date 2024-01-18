@@ -55,8 +55,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 			if(((HC_SR04.Calculated_Time / 1000000.0f) * 340.0f / 2.0f * 100.0f) < 500.0f)
 				HC_SR04.Distance_Raw = (HC_SR04.Calculated_Time / 1000000.0f) * 340.0f / 2.0f * 100.0f;
 			HC_SR04.Distance_KF = Kalman_Filter_Func.First_Order_Kalman_Filter(&HC_SR04_KF,HC_SR04.Distance_Raw);
-			
-			HC_SR04.Capture_State = 0;
+
 			__HAL_TIM_SET_CAPTUREPOLARITY(&htim5,TIM_CHANNEL_4,TIM_INPUTCHANNELPOLARITY_RISING);
 			HAL_TIM_IC_Stop_IT(&htim5,TIM_CHANNEL_4);
 		}

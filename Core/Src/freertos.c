@@ -33,6 +33,7 @@
 #include "Robot_Control.h"
 #include "HC_SR04.h"
 #include "Serial.h"
+#include "Buzzer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,6 +59,7 @@ osThreadId Task_IMUHandle;
 osThreadId Task_InitHandle;
 osThreadId Task_Robot_CtrlHandle;
 osThreadId Task_SerialHandle;
+osThreadId Task_WarningHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -68,6 +70,7 @@ void StartIMUTask(void const * argument);
 void General_Init(void const * argument);
 void Robot_Control(void const * argument);
 void Serial_Send(void const * argument);
+void Sound_Warning(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -130,6 +133,10 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(Task_Serial, Serial_Send, osPriorityHigh, 0, 128);
   Task_SerialHandle = osThreadCreate(osThread(Task_Serial), NULL);
 
+  /* definition and creation of Task_Warning */
+  osThreadDef(Task_Warning, Sound_Warning, osPriorityNormal, 0, 128);
+  Task_WarningHandle = osThreadCreate(osThread(Task_Warning), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -180,6 +187,7 @@ void General_Init(void const * argument)
 	DR16_Func.DR16_USART_Receive_DMA(&huart1);
 	Motors_Func.Motors_Init();
 	HC_SR04_Func.HC_SR04_Init();
+	Buzzer_Func.Buzzer_Init();
 	vTaskDelete(NULL);
   /* Infinite loop */
   /* USER CODE END General_Init */
@@ -198,13 +206,14 @@ void Robot_Control(void const * argument)
 	portTickType xLastWakeTime;
   xLastWakeTime = xTaskGetTickCount();
 
-  const TickType_t TimeIncrement = pdMS_TO_TICKS(10);
+  const TickType_t TimeIncrement = pdMS_TO_TICKS(2);
   /* Infinite loop */
   for(;;)
   {
 		Robot_Func.Robot_Get_Data();
 		Robot_Func.Robot_In_Control();
-		
+		HAL_GPIO_TogglePin(LED_G_GPIO_Port,LED_G_Pin);
+		osDelay(1000);
 		vTaskDelayUntil(&xLastWakeTime, TimeIncrement);
   }
   /* USER CODE END Robot_Control */
@@ -227,12 +236,34 @@ void Serial_Send(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    printf("/*%f,%f,%f,%f,%f,%f*/\n",Board_A_IMU.Export_Data.Total_Yaw,Board_A_IMU.Export_Data.Pitch,Board_A_IMU.Export_Data.Roll,\
-		Board_A_IMU.Export_Data.Gyro_Yaw,Board_A_IMU.Export_Data.Gyro_Pitch,Board_A_IMU.Export_Data.Gyro_Roll);
-		
+    printf("/*%f,%f*/\n",HC_SR04.Distance_Raw,HC_SR04.Distance_KF);
 		vTaskDelayUntil(&xLastWakeTime, TimeIncrement);
   }
   /* USER CODE END Serial_Send */
+}
+
+/* USER CODE BEGIN Header_Sound_Warning */
+/**
+* @brief Function implementing the Task_Warning thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Sound_Warning */
+void Sound_Warning(void const * argument)
+{
+  /* USER CODE BEGIN Sound_Warning */
+	portTickType xLastWakeTime;
+  xLastWakeTime = xTaskGetTickCount();
+
+  const TickType_t TimeIncrement = pdMS_TO_TICKS(10);
+  /* Infinite loop */
+  for(;;)
+  {
+		if(HC_SR04.Distance_KF < 80.0f)
+			Buzzer_Func.Buzzer_Warning();
+		vTaskDelayUntil(&xLastWakeTime, TimeIncrement);
+  }
+  /* USER CODE END Sound_Warning */
 }
 
 /* Private application code --------------------------------------------------*/

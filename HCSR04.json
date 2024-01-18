@@ -1,0 +1,42 @@
+{
+    "frameEnd": "",
+    "frameStart": "",
+    "groups": [
+        {
+            "datasets": [
+                {
+                    "alarm": 0,
+                    "fft": false,
+                    "fftSamples": 1024,
+                    "graph": false,
+                    "led": false,
+                    "log": false,
+                    "max": 0,
+                    "min": 0,
+                    "title": "Distance Before KF (cm)",
+                    "units": "cm",
+                    "value": "%1",
+                    "widget": ""
+                },
+                {
+                    "alarm": 0,
+                    "fft": false,
+                    "fftSamples": 1024,
+                    "graph": false,
+                    "led": false,
+                    "log": false,
+                    "max": 0,
+                    "min": 0,
+                    "title": "Distance After KF (cm)",
+                    "units": "cm",
+                    "value": "%2",
+                    "widget": ""
+                }
+            ],
+            "title": "HC-SR04",
+            "widget": "multiplot"
+        }
+    ],
+    "separator": "",
+    "title": "HC-SR04"
+}

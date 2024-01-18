@@ -15,8 +15,10 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <tim.h>
+#include "cmsis_os.h"
 #include "User_Defined_Math.h"
 #include "Kalman_Filter.h"
+#include "Buzzer.h"
 
 #define HC_SR04_RELOAD_VALUE 100000
 
